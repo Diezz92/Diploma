@@ -4,6 +4,10 @@ node_modules
 .idea
 target
 *.iml
+.gradle
+.vscode
+/build
+/data
 
 # SQL Server files
 *.mdf

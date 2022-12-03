@@ -1,5 +1,6 @@
 package ru.netology.web.data;
 
+import com.github.javafaker.Faker;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
@@ -18,9 +19,23 @@ public class SQLHelper {
     private static final String payTable = "payment_gate";
     @Getter
     private static final String creditTable = "credit_gate";
+
     @SneakyThrows
 
-    public static void dropTables() {
+    public static String getOperationStatus(String table) {
+        String status = "";
+        try (Connection conn = DriverManager.getConnection(url, user, password);
+             Statement statement = conn.createStatement()) {
+            try (ResultSet resultSet = statement.executeQuery("SELECT * FROM " + table + " ORDER BY id DESC LIMIT 1;")) {
+                while (resultSet.next()) status = resultSet.getString("status");
+            }
+        } catch (SQLException exception) {
+            exception.getErrorCode();
+        }
+        return status;
+    }
+
+    public static void dropTables() throws SQLException {
         String dropPaymentTables = "DROP TABLE IF EXISTS payment_gate;";
         String dropCreditTables = "DROP TABLE IF EXISTS credit_gate;";
         Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/app", "app", "pass");
@@ -29,27 +44,9 @@ public class SQLHelper {
         statement.executeUpdate(dropCreditTables);
     }
 
-    public static void createTablePaymentGate() {
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/app", "app", "pass");
-             Statement statement = connection.createStatement()) {
-            statement.executeUpdate("CREATE TABLE payment_gate (id INT UNIQUE KEY AUTO_INCREMENT, number VARCHAR(19) NOT NULL PRIMARY KEY, status VARCHAR(8) NOT NULL)");
-        } catch (SQLException sqlException) {
-            sqlException.getErrorCode();
-        }
-    }
-
-    public static void createTableCreditGate() {
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/app", "app", "pass");
-             Statement statement = connection.createStatement()) {
-            statement.executeUpdate("CREATE TABLE credit_gate ( id INT UNIQUE KEY AUTO_INCREMENT, number VARCHAR(19) NOT NULL PRIMARY KEY, status VARCHAR(8) NOT NULL)");
-        } catch (SQLException sqlException) {
-            sqlException.getErrorCode();
-        }
-    }
-
     public static void insertApprovedCardPaymentGate() {
         String cardData = "INSERT INTO payment_gate (id, number, status) VALUES (?, ?, ?)";
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/app", "app", "pass");
+        try (Connection connection = DriverManager.getConnection(url, user, password);
              PreparedStatement preparedStatement = connection.prepareStatement(cardData)) {
             preparedStatement.setInt(1, 1);
             preparedStatement.setString(2, "4444 4444 4444 4441");
@@ -61,7 +58,7 @@ public class SQLHelper {
 
     public static void insertDeclinedCardPaymentGate() {
         String cardData = "INSERT INTO payment_gate (id, number, status) VALUES (?, ?, ?)";
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/app", "app", "pass");
+        try (Connection connection = DriverManager.getConnection(url, user, password);
              PreparedStatement preparedStatement = connection.prepareStatement(cardData)) {
             preparedStatement.setInt(1, 1);
             preparedStatement.setString(2, "4444 4444 4444 4442");
@@ -71,9 +68,10 @@ public class SQLHelper {
         }
     }
 
+
     public static void insertApprovedCardCreditGate() {
         String cardData = "INSERT INTO credit_gate (id, number, status) VALUES (?, ?, ?)";
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/app", "app", "pass");
+        try (Connection connection = DriverManager.getConnection(url, user, password);
              PreparedStatement preparedStatement = connection.prepareStatement(cardData)) {
             preparedStatement.setInt(1, 1);
             preparedStatement.setString(2, "4444 4444 4444 4441");
@@ -85,7 +83,7 @@ public class SQLHelper {
 
     public static void insertDeclinedCardCreditGate() {
         String cardData = "INSERT INTO credit_gate (id, number, status) VALUES (?, ?, ?)";
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/app", "app", "pass");
+        try (Connection connection = DriverManager.getConnection(url, user, password);
              PreparedStatement preparedStatement = connection.prepareStatement(cardData)) {
             preparedStatement.setInt(1, 1);
             preparedStatement.setString(2, "4444 4444 4444 4442");
@@ -95,33 +93,9 @@ public class SQLHelper {
         }
     }
 
-    public static void insertEmptyPaymentGateApprovedCard() {
-        String cardData = "INSERT INTO payment_gate (id, number, status) VALUES (?, ?, ?)";
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/app", "app", "pass");
-             PreparedStatement preparedStatement = connection.prepareStatement(cardData)) {
-            preparedStatement.setInt(1, 1);
-            preparedStatement.setString(2, "4444 4444 4444 4441");
-            preparedStatement.setString(3, "");
-        } catch (SQLException sqlException) {
-            sqlException.getErrorCode();
-        }
-    }
-
-    public static void insertEmptyCreditGateApprovedCard() {
-        String cardData = "INSERT INTO credit_gate (id, number, status) VALUES (?, ?, ?)";
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/app", "app", "pass");
-             PreparedStatement preparedStatement = connection.prepareStatement(cardData)) {
-            preparedStatement.setInt(1, 1);
-            preparedStatement.setString(2, "4444 4444 4444 4441");
-            preparedStatement.setString(3, "");
-        } catch (SQLException sqlException) {
-            sqlException.getErrorCode();
-        }
-    }
-
     public static void insertEmptyNoCardPaymentGate() {
         String cardData = "INSERT INTO payment_gate (id, number, status) VALUES (?, ?, ?)";
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/app", "app", "pass");
+        try (Connection connection = DriverManager.getConnection(url, user, password);
              PreparedStatement preparedStatement = connection.prepareStatement(cardData)) {
             preparedStatement.setInt(1, 1);
             preparedStatement.setString(2, "");
@@ -133,7 +107,7 @@ public class SQLHelper {
 
     public static void insertEmptyNoCardCreditGate() {
         String cardData = "INSERT INTO credit_gate (id, number, status) VALUES (?, ?, ?)";
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/app", "app", "pass");
+        try (Connection connection = DriverManager.getConnection(url, user, password);
              PreparedStatement preparedStatement = connection.prepareStatement(cardData)) {
             preparedStatement.setInt(1, 1);
             preparedStatement.setString(2, "");
@@ -145,7 +119,7 @@ public class SQLHelper {
 
     public static String getCardStatusPaymentGate(String payTable) {
         String status = "";
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/app", "app", "pass");
+        try (Connection connection = DriverManager.getConnection(url, user, password);
              Statement statement = connection.createStatement()) {
             try (ResultSet resultSet = statement.executeQuery("SELECT status FROM " + payTable + " ;")) {
                 while (resultSet.next()) status = resultSet.getString("status");
@@ -158,7 +132,7 @@ public class SQLHelper {
 
     public static String getCardStatusCreditGate(String creditTable) {
         String status = "";
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/app", "app", "pass");
+        try (Connection connection = DriverManager.getConnection(url, user, password);
              Statement statement = connection.createStatement()) {
             try (ResultSet resultSet = statement.executeQuery("SELECT status FROM " + creditTable + " ;")) {
                 while (resultSet.next()) status = resultSet.getString("status");
@@ -168,6 +142,5 @@ public class SQLHelper {
         }
         return status;
     }
-
 }
 
