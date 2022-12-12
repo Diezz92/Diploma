@@ -36,7 +36,7 @@ public class DiplomaTest {
     @BeforeEach
     void setUp() {
         startPage = open("http://localhost:8080", StartPage.class);
-        SQLHelper.dropTables();
+        SQLHelper.clearTables();
     }
 
     // Тесты на Payment Gate
@@ -47,8 +47,8 @@ public class DiplomaTest {
         val payInfo = DataHelper.getSuccessPayData();
         paymentGatePage.CardData(payInfo);
         paymentGatePage.successMessage("Операция одобрена Банком.");
-        SQLHelper.insertApprovedCardPaymentGate();
-        assertEquals("", SQLHelper.getCardStatusPaymentGate(SQLHelper.getPayTable()));
+        SQLHelper.getPaymentStatus();
+        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -58,8 +58,8 @@ public class DiplomaTest {
         val payInfo = DataHelper.getFailurePayData();
         paymentGatePage.CardData(payInfo);
         paymentGatePage.failureMessage("Банк отказал в проведении операции");
-        SQLHelper.insertDeclinedCardPaymentGate();
-        assertEquals("", SQLHelper.getCardStatusPaymentGate(SQLHelper.getPayTable()));
+        SQLHelper.getPaymentStatus();
+        assertEquals("", SQLHelper.getStatus("DECLINED"));
     }
 
     @Test
@@ -69,8 +69,8 @@ public class DiplomaTest {
         val payInfo = DataHelper.getInvalidMonthPayDataSuccessCard();
         paymentGatePage.CardData(payInfo);
         paymentGatePage.failureDates();
-        SQLHelper.insertApprovedCardPaymentGate();
-        assertEquals("", SQLHelper.getCardStatusPaymentGate(SQLHelper.getPayTable()));
+        SQLHelper.getPaymentStatus();
+        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -80,8 +80,8 @@ public class DiplomaTest {
         val payInfo = DataHelper.getInvalidMonthPayDataLess01SuccessCard();
         paymentGatePage.CardData(payInfo);
         paymentGatePage.failureDates();
-        SQLHelper.insertApprovedCardPaymentGate();
-        assertEquals("", SQLHelper.getCardStatusPaymentGate(SQLHelper.getPayTable()));
+        SQLHelper.getPaymentStatus();
+        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -91,8 +91,8 @@ public class DiplomaTest {
         val payInfo = DataHelper.getInvalidYearPayDataSuccessCard();
         paymentGatePage.CardData(payInfo);
         paymentGatePage.failureDates();
-        SQLHelper.insertApprovedCardPaymentGate();
-        assertEquals("", SQLHelper.getCardStatusPaymentGate(SQLHelper.getPayTable()));
+        SQLHelper.getPaymentStatus();
+        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -102,8 +102,8 @@ public class DiplomaTest {
         val payInfo = DataHelper.getInvalidYearPayDataLessSuccessCard();
         paymentGatePage.CardData(payInfo);
         paymentGatePage.failureDatesLess();
-        SQLHelper.insertApprovedCardPaymentGate();
-        assertEquals("", SQLHelper.getCardStatusPaymentGate(SQLHelper.getPayTable()));
+        SQLHelper.getPaymentStatus();
+        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -113,8 +113,8 @@ public class DiplomaTest {
         val payInfo = DataHelper.getInvalidYearPayDataLess01SuccessCard();
         paymentGatePage.CardData(payInfo);
         paymentGatePage.failureDatesLess();
-        SQLHelper.insertApprovedCardPaymentGate();
-        assertEquals("", SQLHelper.getCardStatusPaymentGate(SQLHelper.getPayTable()));
+        SQLHelper.getPaymentStatus();
+        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -124,8 +124,8 @@ public class DiplomaTest {
         val payInfo = DataHelper.getInvalidUserPayDataSuccessCard();
         paymentGatePage.CardData(payInfo);
         paymentGatePage.failureUser();
-        SQLHelper.insertApprovedCardPaymentGate();
-        assertEquals("", SQLHelper.getCardStatusPaymentGate(SQLHelper.getPayTable()));
+        SQLHelper.getPaymentStatus();
+        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -135,8 +135,8 @@ public class DiplomaTest {
         val payInfo = DataHelper.getInvalidUserPayDataRandomCharactersSuccessCard();
         paymentGatePage.CardData(payInfo);
         paymentGatePage.failureUser();
-        SQLHelper.insertApprovedCardPaymentGate();
-        assertEquals("", SQLHelper.getCardStatusPaymentGate(SQLHelper.getPayTable()));
+        SQLHelper.getPaymentStatus();
+        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -146,8 +146,8 @@ public class DiplomaTest {
         val payInfo = DataHelper.getInvalidCvvCodePayDataSuccessCard();
         paymentGatePage.CardData(payInfo);
         paymentGatePage.failureMonthOrYearOrCvvCode();
-        SQLHelper.insertApprovedCardPaymentGate();
-        assertEquals("", SQLHelper.getCardStatusPaymentGate(SQLHelper.getPayTable()));
+        SQLHelper.getPaymentStatus();
+        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -157,8 +157,8 @@ public class DiplomaTest {
         val payInfo = DataHelper.getInvalidCvvCodePayDataLess001SuccessCard();
         paymentGatePage.CardData(payInfo);
         paymentGatePage.failureMonthOrYearOrCvvCode();
-        SQLHelper.insertApprovedCardPaymentGate();
-        assertEquals("", SQLHelper.getCardStatusPaymentGate(SQLHelper.getPayTable()));
+        SQLHelper.getPaymentStatus();
+        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -167,8 +167,8 @@ public class DiplomaTest {
         val paymentGatePage = startPage.paymentGate();
         paymentGatePage.emptyClick();
         paymentGatePage.failureEmptyFields();
-        SQLHelper.insertEmptyNoCardPaymentGate();
-        assertEquals("", SQLHelper.getCardStatusPaymentGate(SQLHelper.getPayTable()));
+        SQLHelper.getPaymentStatus();
+        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -178,8 +178,8 @@ public class DiplomaTest {
         val payInfo = DataHelper.getEmptyValueMonthPayDataSuccessCard();
         paymentGatePage.CardData(payInfo);
         paymentGatePage.failureMonthOrYearOrCvvCode();
-        SQLHelper.insertApprovedCardPaymentGate();
-        assertEquals("", SQLHelper.getCardStatusPaymentGate(SQLHelper.getPayTable()));
+        SQLHelper.getPaymentStatus();
+        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -189,8 +189,8 @@ public class DiplomaTest {
         val payInfo = DataHelper.getEmptyValueYearPayDataSuccessCard();
         paymentGatePage.CardData(payInfo);
         paymentGatePage.failureMonthOrYearOrCvvCode();
-        SQLHelper.insertApprovedCardPaymentGate();
-        assertEquals("", SQLHelper.getCardStatusPaymentGate(SQLHelper.getPayTable()));
+        SQLHelper.getPaymentStatus();
+        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -200,8 +200,8 @@ public class DiplomaTest {
         val payInfo = DataHelper.getEmptyValueUserPayDataSuccessCard();
         paymentGatePage.CardData(payInfo);
         paymentGatePage.failureUser();
-        SQLHelper.insertApprovedCardPaymentGate();
-        assertEquals("", SQLHelper.getCardStatusPaymentGate(SQLHelper.getPayTable()));
+        SQLHelper.getPaymentStatus();
+        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -211,13 +211,12 @@ public class DiplomaTest {
         val payInfo = DataHelper.getEmptyValueCvvCodePayDataSuccessCard();
         paymentGatePage.CardData(payInfo);
         paymentGatePage.failureMonthOrYearOrCvvCode();
-        SQLHelper.insertApprovedCardPaymentGate();
-        assertEquals("", SQLHelper.getCardStatusPaymentGate(SQLHelper.getPayTable()));
+        SQLHelper.getPaymentStatus();
+        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
 
     // Тесты на Credit Gate
-
 
     @Test
     @DisplayName("1.1 Заполнение валидными данными, Credit Gate (позитивный сценарий)")
@@ -226,10 +225,9 @@ public class DiplomaTest {
         val payInfo = DataHelper.getSuccessPayData();
         creditGatePage.CardData(payInfo);
         creditGatePage.successMessage("Операция одобрена Банком.");
-        SQLHelper.insertApprovedCardCreditGate();
-        assertEquals("", SQLHelper.getCardStatusCreditGate(SQLHelper.getCreditTable()));
+        SQLHelper.getCreditStatus();
+        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
-
 
     @Test
     @DisplayName("2.1 Заполнение валидными данными, Credit Gate (негативный сценарий)")
@@ -238,10 +236,9 @@ public class DiplomaTest {
         val payInfo = DataHelper.getFailurePayData();
         creditGatePage.CardData(payInfo);
         creditGatePage.failureMessage("Банк отказал в проведении операции");
-        SQLHelper.insertDeclinedCardCreditGate();
-        assertEquals("", SQLHelper.getCardStatusCreditGate(SQLHelper.getCreditTable()));
+        SQLHelper.getCreditStatus();
+        assertEquals("", SQLHelper.getStatus("DECLINED"));
     }
-
 
     @Test
     @DisplayName("3.1 заполнение поля Месяц невалидным значением, Credit Gate (негативный сценарий)")
@@ -250,10 +247,9 @@ public class DiplomaTest {
         val payInfo = DataHelper.getInvalidMonthPayDataSuccessCard();
         creditGatePage.CardData(payInfo);
         creditGatePage.failureDates();
-        SQLHelper.insertApprovedCardCreditGate();
-        assertEquals("", SQLHelper.getCardStatusCreditGate(SQLHelper.getCreditTable()));
+        SQLHelper.getCreditStatus();
+        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
-
 
     @Test
     @DisplayName("3.2 заполнение поля Месяц невалидным значением (00), Credit Gate (негативный сценарий)")
@@ -262,10 +258,9 @@ public class DiplomaTest {
         val payInfo = DataHelper.getInvalidMonthPayDataLess01SuccessCard();
         creditGatePage.CardData(payInfo);
         creditGatePage.failureDates();
-        SQLHelper.insertApprovedCardCreditGate();
-        assertEquals("", SQLHelper.getCardStatusCreditGate(SQLHelper.getCreditTable()));
+        SQLHelper.getCreditStatus();
+        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
-
 
     @Test
     @DisplayName("4.1 заполнение поля Год невалидным значением, Credit Gate (негативный сценарий)")
@@ -274,8 +269,8 @@ public class DiplomaTest {
         val payInfo = DataHelper.getInvalidYearPayDataSuccessCard();
         creditGatePage.CardData(payInfo);
         creditGatePage.failureDates();
-        SQLHelper.insertApprovedCardCreditGate();
-        assertEquals("", SQLHelper.getCardStatusCreditGate(SQLHelper.getCreditTable()));
+        SQLHelper.getCreditStatus();
+        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -285,8 +280,8 @@ public class DiplomaTest {
         val payInfo = DataHelper.getInvalidYearPayDataLessSuccessCard();
         creditGatePage.CardData(payInfo);
         creditGatePage.failureDatesLess();
-        SQLHelper.insertApprovedCardCreditGate();
-        assertEquals("", SQLHelper.getCardStatusCreditGate(SQLHelper.getCreditTable()));
+        SQLHelper.getCreditStatus();
+        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -296,10 +291,9 @@ public class DiplomaTest {
         val payInfo = DataHelper.getInvalidYearPayDataLess01SuccessCard();
         creditGatePage.CardData(payInfo);
         creditGatePage.failureDatesLess();
-        SQLHelper.insertApprovedCardCreditGate();
-        assertEquals("", SQLHelper.getCardStatusCreditGate(SQLHelper.getCreditTable()));
+        SQLHelper.getCreditStatus();
+        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
-
 
     @Test
     @DisplayName("5.1 заполнение поля Владелец невалидным значением, Credit Gate (негативный сценарий)")
@@ -308,8 +302,8 @@ public class DiplomaTest {
         val payInfo = DataHelper.getInvalidUserPayDataSuccessCard();
         creditGatePage.CardData(payInfo);
         creditGatePage.failureUser();
-        SQLHelper.insertApprovedCardCreditGate();
-        assertEquals("", SQLHelper.getCardStatusCreditGate(SQLHelper.getCreditTable()));
+        SQLHelper.getCreditStatus();
+        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -319,10 +313,9 @@ public class DiplomaTest {
         val payInfo = DataHelper.getInvalidUserPayDataRandomCharactersSuccessCard();
         creditGatePage.CardData(payInfo);
         creditGatePage.failureUser();
-        SQLHelper.insertApprovedCardCreditGate();
-        assertEquals("", SQLHelper.getCardStatusCreditGate(SQLHelper.getCreditTable()));
+        SQLHelper.getCreditStatus();
+        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
-
 
     @Test
     @DisplayName("6.1 заполнение поля CVC/CVV невалидным значением, Credit Gate (негативный сценарий)")
@@ -331,8 +324,8 @@ public class DiplomaTest {
         val payInfo = DataHelper.getInvalidCvvCodePayDataSuccessCard();
         creditGatePage.CardData(payInfo);
         creditGatePage.failureMonthOrYearOrCvvCode();
-        SQLHelper.insertApprovedCardCreditGate();
-        assertEquals("", SQLHelper.getCardStatusCreditGate(SQLHelper.getCreditTable()));
+        SQLHelper.getCreditStatus();
+        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -342,8 +335,8 @@ public class DiplomaTest {
         val payInfo = DataHelper.getInvalidCvvCodePayDataLess001SuccessCard();
         creditGatePage.CardData(payInfo);
         creditGatePage.failureMonthOrYearOrCvvCode();
-        SQLHelper.insertApprovedCardCreditGate();
-        assertEquals("", SQLHelper.getCardStatusCreditGate(SQLHelper.getCreditTable()));
+        SQLHelper.getCreditStatus();
+        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -352,8 +345,8 @@ public class DiplomaTest {
         val creditGatePage = startPage.creditGate();
         creditGatePage.emptyClick();
         creditGatePage.failureEmptyFields();
-        SQLHelper.insertEmptyNoCardCreditGate();
-        assertEquals("", SQLHelper.getCardStatusCreditGate(SQLHelper.getCreditTable()));
+        SQLHelper.getCreditStatus();
+        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -363,8 +356,8 @@ public class DiplomaTest {
         val payInfo = DataHelper.getEmptyValueMonthPayDataSuccessCard();
         creditGatePage.CardData(payInfo);
         creditGatePage.failureMonthOrYearOrCvvCode();
-        SQLHelper.insertApprovedCardCreditGate();
-        assertEquals("", SQLHelper.getCardStatusCreditGate(SQLHelper.getCreditTable()));
+        SQLHelper.getCreditStatus();
+        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -374,8 +367,8 @@ public class DiplomaTest {
         val payInfo = DataHelper.getEmptyValueYearPayDataSuccessCard();
         creditGatePage.CardData(payInfo);
         creditGatePage.failureMonthOrYearOrCvvCode();
-        SQLHelper.insertApprovedCardCreditGate();
-        assertEquals("", SQLHelper.getCardStatusCreditGate(SQLHelper.getCreditTable()));
+        SQLHelper.getCreditStatus();
+        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -385,8 +378,8 @@ public class DiplomaTest {
         val payInfo = DataHelper.getEmptyValueUserPayDataSuccessCard();
         creditGatePage.CardData(payInfo);
         creditGatePage.failureUser();
-        SQLHelper.insertApprovedCardCreditGate();
-        assertEquals("", SQLHelper.getCardStatusCreditGate(SQLHelper.getCreditTable()));
+        SQLHelper.getCreditStatus();
+        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -396,7 +389,7 @@ public class DiplomaTest {
         val payInfo = DataHelper.getEmptyValueCvvCodePayDataSuccessCard();
         creditGatePage.CardData(payInfo);
         creditGatePage.failureMonthOrYearOrCvvCode();
-        SQLHelper.insertApprovedCardCreditGate();
-        assertEquals("", SQLHelper.getCardStatusCreditGate(SQLHelper.getCreditTable()));
+        SQLHelper.getCreditStatus();
+        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 }

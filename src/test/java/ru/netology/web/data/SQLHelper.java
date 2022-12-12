@@ -1,8 +1,11 @@
 package ru.netology.web.data;
 
-import com.github.javafaker.Faker;
-import lombok.Getter;
+import java.sql.DriverManager;
+
 import lombok.SneakyThrows;
+import lombok.val;
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.ScalarHandler;
 
 import java.sql.*;
 
@@ -12,135 +15,52 @@ public class SQLHelper {
     }
 
     private static String url = System.getProperty("db.url");
-    private static String user = System.getProperty("db.app");
-    private static String password = System.getProperty("db.pass");
+    private static String user = System.getProperty("db.user");
+    private static String pass = System.getProperty("db.password");
 
-    @Getter
-    private static final String payTable = "payment_gate";
-    @Getter
-    private static final String creditTable = "credit_gate";
+    public static void clearTables() {
+        val deletePaymentEntity = "DELETE FROM payment_entity";
+        val deleteCreditEntity = "DELETE FROM credit_request_entity";
+        val deleteOrderEntity = "DELETE FROM order_entity";
+        val runner = new QueryRunner();
+        try (val conn = DriverManager.getConnection(
+                url, user, pass)
+        ) {
+            runner.update(conn, deletePaymentEntity);
+            runner.update(conn, deleteCreditEntity);
+            runner.update(conn, deleteOrderEntity);
+        } catch (SQLException sqlException) {
+            sqlException.printStackTrace();
+        }
+
+    }
 
     @SneakyThrows
-
-    public static String getOperationStatus(String table) {
-        String status = "";
-        try (Connection conn = DriverManager.getConnection(url, user, password);
-             Statement statement = conn.createStatement()) {
-            try (ResultSet resultSet = statement.executeQuery("SELECT * FROM " + table + " ORDER BY id DESC LIMIT 1;")) {
-                while (resultSet.next()) status = resultSet.getString("status");
-            }
-        } catch (SQLException exception) {
-            exception.getErrorCode();
-        }
-        return status;
+    public static String getPaymentStatus() {
+        String statusSQL = "SELECT status FROM payment_entity";
+        return getStatus(statusSQL);
     }
 
-    public static void dropTables() throws SQLException {
-        String dropPaymentTables = "DROP TABLE IF EXISTS payment_gate;";
-        String dropCreditTables = "DROP TABLE IF EXISTS credit_gate;";
-        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/app", "app", "pass");
-        Statement statement = connection.createStatement();
-        statement.executeUpdate(dropPaymentTables);
-        statement.executeUpdate(dropCreditTables);
+    @SneakyThrows
+    public static String getCreditStatus() {
+        String statusSQL = "SELECT status FROM credit_request_entity";
+        return getStatus(statusSQL);
     }
 
-    public static void insertApprovedCardPaymentGate() {
-        String cardData = "INSERT INTO payment_gate (id, number, status) VALUES (?, ?, ?)";
-        try (Connection connection = DriverManager.getConnection(url, user, password);
-             PreparedStatement preparedStatement = connection.prepareStatement(cardData)) {
-            preparedStatement.setInt(1, 1);
-            preparedStatement.setString(2, "4444 4444 4444 4441");
-            preparedStatement.setString(3, "APPROVED");
+    @SneakyThrows
+    public static String getStatus(String query) {
+        var codeSQL = "SELECT code FROM auth_codes ORDER BY created DESC LIMIT 1";
+        String result = "";
+        val runner = new QueryRunner();
+        try
+                (val conn = DriverManager.getConnection(
+                        url, user, pass)
+                ) {
+
+            result = runner.query(conn, codeSQL, new ScalarHandler<String>());
         } catch (SQLException sqlException) {
-            sqlException.getErrorCode();
+            sqlException.printStackTrace();
         }
-    }
-
-    public static void insertDeclinedCardPaymentGate() {
-        String cardData = "INSERT INTO payment_gate (id, number, status) VALUES (?, ?, ?)";
-        try (Connection connection = DriverManager.getConnection(url, user, password);
-             PreparedStatement preparedStatement = connection.prepareStatement(cardData)) {
-            preparedStatement.setInt(1, 1);
-            preparedStatement.setString(2, "4444 4444 4444 4442");
-            preparedStatement.setString(3, "DECLINED");
-        } catch (SQLException sqlException) {
-            sqlException.getErrorCode();
-        }
-    }
-
-
-    public static void insertApprovedCardCreditGate() {
-        String cardData = "INSERT INTO credit_gate (id, number, status) VALUES (?, ?, ?)";
-        try (Connection connection = DriverManager.getConnection(url, user, password);
-             PreparedStatement preparedStatement = connection.prepareStatement(cardData)) {
-            preparedStatement.setInt(1, 1);
-            preparedStatement.setString(2, "4444 4444 4444 4441");
-            preparedStatement.setString(3, "APPROVED");
-        } catch (SQLException sqlException) {
-            sqlException.getErrorCode();
-        }
-    }
-
-    public static void insertDeclinedCardCreditGate() {
-        String cardData = "INSERT INTO credit_gate (id, number, status) VALUES (?, ?, ?)";
-        try (Connection connection = DriverManager.getConnection(url, user, password);
-             PreparedStatement preparedStatement = connection.prepareStatement(cardData)) {
-            preparedStatement.setInt(1, 1);
-            preparedStatement.setString(2, "4444 4444 4444 4442");
-            preparedStatement.setString(3, "DECLINED");
-        } catch (SQLException sqlException) {
-            sqlException.getErrorCode();
-        }
-    }
-
-    public static void insertEmptyNoCardPaymentGate() {
-        String cardData = "INSERT INTO payment_gate (id, number, status) VALUES (?, ?, ?)";
-        try (Connection connection = DriverManager.getConnection(url, user, password);
-             PreparedStatement preparedStatement = connection.prepareStatement(cardData)) {
-            preparedStatement.setInt(1, 1);
-            preparedStatement.setString(2, "");
-            preparedStatement.setString(3, "");
-        } catch (SQLException sqlException) {
-            sqlException.getErrorCode();
-        }
-    }
-
-    public static void insertEmptyNoCardCreditGate() {
-        String cardData = "INSERT INTO credit_gate (id, number, status) VALUES (?, ?, ?)";
-        try (Connection connection = DriverManager.getConnection(url, user, password);
-             PreparedStatement preparedStatement = connection.prepareStatement(cardData)) {
-            preparedStatement.setInt(1, 1);
-            preparedStatement.setString(2, "");
-            preparedStatement.setString(3, "");
-        } catch (SQLException sqlException) {
-            sqlException.getErrorCode();
-        }
-    }
-
-    public static String getCardStatusPaymentGate(String payTable) {
-        String status = "";
-        try (Connection connection = DriverManager.getConnection(url, user, password);
-             Statement statement = connection.createStatement()) {
-            try (ResultSet resultSet = statement.executeQuery("SELECT status FROM " + payTable + " ;")) {
-                while (resultSet.next()) status = resultSet.getString("status");
-            }
-        } catch (SQLException sqlException) {
-            sqlException.getErrorCode();
-        }
-        return status;
-    }
-
-    public static String getCardStatusCreditGate(String creditTable) {
-        String status = "";
-        try (Connection connection = DriverManager.getConnection(url, user, password);
-             Statement statement = connection.createStatement()) {
-            try (ResultSet resultSet = statement.executeQuery("SELECT status FROM " + creditTable + " ;")) {
-                while (resultSet.next()) status = resultSet.getString("status");
-            }
-        } catch (SQLException sqlException) {
-            sqlException.getErrorCode();
-        }
-        return status;
+        return result;
     }
 }
-
