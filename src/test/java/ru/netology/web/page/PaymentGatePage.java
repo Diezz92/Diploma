@@ -22,7 +22,6 @@ public class PaymentGatePage {
     private SelenideElement continueButton = $(byText("Продолжить"));
     private SelenideElement success = $(".notification_status_ok");
     private SelenideElement failure = $(".notification_status_error");
-
     private SelenideElement invalidDates = $(".input__sub");
     private SelenideElement invalidDatesLess = $(byText("Истёк срок действия карты"));
     private SelenideElement invalidParameters = $(byText("Неверный формат"));
