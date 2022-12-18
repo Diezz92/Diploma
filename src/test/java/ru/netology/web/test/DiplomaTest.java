@@ -2,14 +2,12 @@ package ru.netology.web.test;
 
 import com.codeborne.selenide.logevents.SelenideLogger;
 import io.qameta.allure.selenide.AllureSelenide;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.*;
 import ru.netology.web.data.DataHelper;
 import ru.netology.web.data.SQLHelper;
 import ru.netology.web.page.StartPage;
 
-import static com.codeborne.selenide.Selenide.closeWebDriver;
 import static com.codeborne.selenide.Selenide.open;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -27,12 +25,6 @@ public class DiplomaTest {
         SelenideLogger.removeListener("allure");
     }
 
-    @AfterEach
-    void tearDown() {
-        closeWebDriver();
-    }
-
-    @SneakyThrows
     @BeforeEach
     void setUp() {
         startPage = open("http://localhost:8080", StartPage.class);
@@ -48,7 +40,7 @@ public class DiplomaTest {
         paymentGatePage.CardData(payInfo);
         paymentGatePage.successMessage("Операция одобрена Банком.");
         SQLHelper.getPaymentStatus();
-        assertEquals("", SQLHelper.getStatus("APPROVED"));
+        assertEquals("APPROVED", SQLHelper.getPaymentStatus());
     }
 
     @Test
@@ -59,7 +51,7 @@ public class DiplomaTest {
         paymentGatePage.CardData(payInfo);
         paymentGatePage.failureMessage("Банк отказал в проведении операции");
         SQLHelper.getPaymentStatus();
-        assertEquals("", SQLHelper.getStatus("DECLINED"));
+        assertEquals("DECLINED", SQLHelper.getPaymentStatus());
     }
 
     @Test
@@ -70,7 +62,6 @@ public class DiplomaTest {
         paymentGatePage.CardData(payInfo);
         paymentGatePage.failureDates();
         SQLHelper.getPaymentStatus();
-        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -81,7 +72,6 @@ public class DiplomaTest {
         paymentGatePage.CardData(payInfo);
         paymentGatePage.failureDates();
         SQLHelper.getPaymentStatus();
-        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -92,7 +82,6 @@ public class DiplomaTest {
         paymentGatePage.CardData(payInfo);
         paymentGatePage.failureDates();
         SQLHelper.getPaymentStatus();
-        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -103,7 +92,6 @@ public class DiplomaTest {
         paymentGatePage.CardData(payInfo);
         paymentGatePage.failureDatesLess();
         SQLHelper.getPaymentStatus();
-        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -114,7 +102,6 @@ public class DiplomaTest {
         paymentGatePage.CardData(payInfo);
         paymentGatePage.failureDatesLess();
         SQLHelper.getPaymentStatus();
-        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -125,7 +112,6 @@ public class DiplomaTest {
         paymentGatePage.CardData(payInfo);
         paymentGatePage.failureUser();
         SQLHelper.getPaymentStatus();
-        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -136,7 +122,6 @@ public class DiplomaTest {
         paymentGatePage.CardData(payInfo);
         paymentGatePage.failureUser();
         SQLHelper.getPaymentStatus();
-        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -147,7 +132,6 @@ public class DiplomaTest {
         paymentGatePage.CardData(payInfo);
         paymentGatePage.failureMonthOrYearOrCvvCode();
         SQLHelper.getPaymentStatus();
-        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -158,7 +142,6 @@ public class DiplomaTest {
         paymentGatePage.CardData(payInfo);
         paymentGatePage.failureMonthOrYearOrCvvCode();
         SQLHelper.getPaymentStatus();
-        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -168,7 +151,6 @@ public class DiplomaTest {
         paymentGatePage.emptyClick();
         paymentGatePage.failureEmptyFields();
         SQLHelper.getPaymentStatus();
-        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -179,7 +161,6 @@ public class DiplomaTest {
         paymentGatePage.CardData(payInfo);
         paymentGatePage.failureMonthOrYearOrCvvCode();
         SQLHelper.getPaymentStatus();
-        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -190,7 +171,6 @@ public class DiplomaTest {
         paymentGatePage.CardData(payInfo);
         paymentGatePage.failureMonthOrYearOrCvvCode();
         SQLHelper.getPaymentStatus();
-        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -201,7 +181,6 @@ public class DiplomaTest {
         paymentGatePage.CardData(payInfo);
         paymentGatePage.failureUser();
         SQLHelper.getPaymentStatus();
-        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -212,12 +191,11 @@ public class DiplomaTest {
         paymentGatePage.CardData(payInfo);
         paymentGatePage.failureMonthOrYearOrCvvCode();
         SQLHelper.getPaymentStatus();
-        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
 
-    // Тесты на Credit Gate
-
+    //    // Тесты на Credit Gate
+//
     @Test
     @DisplayName("1.1 Заполнение валидными данными, Credit Gate (позитивный сценарий)")
     void shouldSuccessCreditGate() {
@@ -226,7 +204,7 @@ public class DiplomaTest {
         creditGatePage.CardData(payInfo);
         creditGatePage.successMessage("Операция одобрена Банком.");
         SQLHelper.getCreditStatus();
-        assertEquals("", SQLHelper.getStatus("APPROVED"));
+        assertEquals("APPROVED", SQLHelper.getCreditStatus());
     }
 
     @Test
@@ -237,7 +215,7 @@ public class DiplomaTest {
         creditGatePage.CardData(payInfo);
         creditGatePage.failureMessage("Банк отказал в проведении операции");
         SQLHelper.getCreditStatus();
-        assertEquals("", SQLHelper.getStatus("DECLINED"));
+        assertEquals("DECLINED", SQLHelper.getCreditStatus());
     }
 
     @Test
@@ -248,7 +226,6 @@ public class DiplomaTest {
         creditGatePage.CardData(payInfo);
         creditGatePage.failureDates();
         SQLHelper.getCreditStatus();
-        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -259,7 +236,6 @@ public class DiplomaTest {
         creditGatePage.CardData(payInfo);
         creditGatePage.failureDates();
         SQLHelper.getCreditStatus();
-        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -270,7 +246,6 @@ public class DiplomaTest {
         creditGatePage.CardData(payInfo);
         creditGatePage.failureDates();
         SQLHelper.getCreditStatus();
-        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -281,7 +256,6 @@ public class DiplomaTest {
         creditGatePage.CardData(payInfo);
         creditGatePage.failureDatesLess();
         SQLHelper.getCreditStatus();
-        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -292,7 +266,6 @@ public class DiplomaTest {
         creditGatePage.CardData(payInfo);
         creditGatePage.failureDatesLess();
         SQLHelper.getCreditStatus();
-        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -303,7 +276,6 @@ public class DiplomaTest {
         creditGatePage.CardData(payInfo);
         creditGatePage.failureUser();
         SQLHelper.getCreditStatus();
-        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -314,7 +286,6 @@ public class DiplomaTest {
         creditGatePage.CardData(payInfo);
         creditGatePage.failureUser();
         SQLHelper.getCreditStatus();
-        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -325,7 +296,6 @@ public class DiplomaTest {
         creditGatePage.CardData(payInfo);
         creditGatePage.failureMonthOrYearOrCvvCode();
         SQLHelper.getCreditStatus();
-        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -336,7 +306,6 @@ public class DiplomaTest {
         creditGatePage.CardData(payInfo);
         creditGatePage.failureMonthOrYearOrCvvCode();
         SQLHelper.getCreditStatus();
-        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -346,7 +315,6 @@ public class DiplomaTest {
         creditGatePage.emptyClick();
         creditGatePage.failureEmptyFields();
         SQLHelper.getCreditStatus();
-        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -357,7 +325,6 @@ public class DiplomaTest {
         creditGatePage.CardData(payInfo);
         creditGatePage.failureMonthOrYearOrCvvCode();
         SQLHelper.getCreditStatus();
-        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -368,7 +335,6 @@ public class DiplomaTest {
         creditGatePage.CardData(payInfo);
         creditGatePage.failureMonthOrYearOrCvvCode();
         SQLHelper.getCreditStatus();
-        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -379,7 +345,6 @@ public class DiplomaTest {
         creditGatePage.CardData(payInfo);
         creditGatePage.failureUser();
         SQLHelper.getCreditStatus();
-        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 
     @Test
@@ -390,6 +355,5 @@ public class DiplomaTest {
         creditGatePage.CardData(payInfo);
         creditGatePage.failureMonthOrYearOrCvvCode();
         SQLHelper.getCreditStatus();
-        assertEquals("", SQLHelper.getStatus("APPROVED"));
     }
 }

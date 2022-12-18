@@ -6,8 +6,7 @@ import ru.netology.web.data.DataHelper;
 
 import java.time.Duration;
 
-import static com.codeborne.selenide.Condition.exactText;
-import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.*;
 import static com.codeborne.selenide.Selenide.*;
 
@@ -21,9 +20,10 @@ public class PaymentGatePage {
     private SelenideElement cardUser = userField.get(3);
     private SelenideElement cvvField = $("input[placeholder='999']");
     private SelenideElement continueButton = $(byText("Продолжить"));
-    private SelenideElement success = $(byText("Операция одобрена Банком."));
-    private SelenideElement failure = $(byText("Ошибка! Банк отказал в проведении операции."));
-    private SelenideElement invalidDates = $(byText("Неверно указан срок действия карты"));
+    private SelenideElement success = $(".notification_status_ok");
+    private SelenideElement failure = $(".notification_status_error");
+
+    private SelenideElement invalidDates = $(".input__sub");
     private SelenideElement invalidDatesLess = $(byText("Истёк срок действия карты"));
     private SelenideElement invalidParameters = $(byText("Неверный формат"));
     private SelenideElement emptyFields = $(byText("Поле обязательно для заполнения"));
@@ -42,11 +42,11 @@ public class PaymentGatePage {
     }
 
     public void successMessage(String expectedText) {
-        success.shouldHave(exactText(expectedText), Duration.ofSeconds(10)).shouldBe(visible);
+        success.shouldHave(text(expectedText), Duration.ofSeconds(10)).shouldBe(visible);
     }
 
     public void failureMessage(String expectedText) {
-        failure.shouldHave(exactText(expectedText), Duration.ofSeconds(10)).shouldBe(visible);
+        failure.shouldHave(text(expectedText), Duration.ofSeconds(10)).shouldBe(visible);
     }
 
     public void failureDates() {

@@ -33,7 +33,7 @@ public class DataHelper {
 
 
     public static String getMonthInvalid() {
-        return String.valueOf(faker.number().numberBetween(12, 98));
+        return String.valueOf(faker.number().numberBetween(13, 99));
     }
 
     public static String setDate(int plusYear) {

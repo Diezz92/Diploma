@@ -32,24 +32,23 @@ public class SQLHelper {
         } catch (SQLException sqlException) {
             sqlException.printStackTrace();
         }
-
     }
 
     @SneakyThrows
     public static String getPaymentStatus() {
         String statusSQL = "SELECT status FROM payment_entity";
-        return getStatus(statusSQL);
+        return getPayStatus(statusSQL);
     }
 
     @SneakyThrows
     public static String getCreditStatus() {
         String statusSQL = "SELECT status FROM credit_request_entity";
-        return getStatus(statusSQL);
+        return getCredStatus(statusSQL);
     }
 
     @SneakyThrows
-    public static String getStatus(String query) {
-        var codeSQL = "SELECT code FROM auth_codes ORDER BY created DESC LIMIT 1";
+    private static String getPayStatus(String query) {
+        var codeSQL = "SELECT status FROM payment_entity ORDER BY created DESC LIMIT 1";
         String result = "";
         val runner = new QueryRunner();
         try
@@ -58,9 +57,30 @@ public class SQLHelper {
                 ) {
 
             result = runner.query(conn, codeSQL, new ScalarHandler<String>());
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace();
+            System.out.println(result);
+            return result;
+        } catch (SQLException exception) {
+            exception.printStackTrace();
         }
-        return result;
+        return null;
+    }
+
+    @SneakyThrows
+    private static String getCredStatus(String query) {
+        var codeSQL = "SELECT status FROM credit_request_entity ORDER BY created DESC LIMIT 1";
+        String result = "";
+        val runner = new QueryRunner();
+        try
+                (val conn = DriverManager.getConnection(
+                        url, user, pass)
+                ) {
+
+            result = runner.query(conn, codeSQL, new ScalarHandler<String>());
+            System.out.println(result);
+            return result;
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return null;
     }
 }
